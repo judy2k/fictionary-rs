@@ -9,7 +9,6 @@ The wordlist file is currently loaded (on MacOS) from `$HOME/Library/Application
 
 In rough priority order:
 
-* Add a license!
 * Add the ability to serialize the CharkovChain to an appropriate file format,
   so that it doesn't need to be generated from a word list each time.
 * Make wordlist/charkov file loading a bit more idiomatic and cascading from shared to user directories.
