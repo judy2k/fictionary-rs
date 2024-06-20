@@ -19,6 +19,8 @@ In rough priority order:
   so that custom local wordlists can be used.
 * Make the tests deterministic by setting a random seed.
 * Validate that --min-length &lt;= --max-length
+* Validate that --min-length > 3?
+* Validate that --max-length < 20?
 * Document the code.
 * Different output depending on stdout being a TTY
 * Capital-letter words should not be added to the chain, but *should* be converted to lower-case and added to the known wordset, so that these words aren't accidentally generated.

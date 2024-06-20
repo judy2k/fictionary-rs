@@ -2,6 +2,8 @@ use std::collections::HashMap;
 use std::collections::HashSet;
 
 use counter::Counter;
+use serde::Deserialize;
+use serde::Serialize;
 use thiserror::Error;
 use weighted_rand::{builder::NewBuilder, builder::WalkerTableBuilder, table::WalkerTable};
 
@@ -46,6 +48,7 @@ impl CharCounter {
 }
 
 /// WalkerTable only returns the index of the selected weight, so we also need to keep a vec of `MaybeChar`s to select from.
+#[derive(Serialize, Deserialize)]
 struct CharChooser {
     chars: Vec<MaybeChar>,
     chooser: WalkerTable,
@@ -65,6 +68,7 @@ impl CharChooser {
 }
 
 /// A Markov chain, for characters. I'm here all week. Try the fish.
+#[derive(Serialize, Deserialize)]
 pub struct CharkovChain {
     chain: HashMap<CharkovKey, CharChooser>,
     words: HashSet<String>,
