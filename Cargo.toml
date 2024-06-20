@@ -1,0 +1,12 @@
+[package]
+name = "fictionary-rs"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.5.7", features = ["derive"] }
+color-eyre = "0.6.3"
+counter = "0.5.7"
+eyre = "0.6.12"
+thiserror = "1.0.61"
+weighted_rand = "0.4.2"
