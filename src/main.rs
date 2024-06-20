@@ -13,9 +13,9 @@ struct Args {
     #[arg(short = 'c', long, default_value_t = 1)]
     count: usize,
     #[arg(short = 'm', long, default_value_t = 4)]
-    min_len: usize,
+    min_length: usize,
     #[arg(short = 'x', long, default_value_t = 10)]
-    max_len: usize,
+    max_length: usize,
 }
 
 fn main() -> eyre::Result<()> {
@@ -25,7 +25,7 @@ fn main() -> eyre::Result<()> {
     println!("Reading {filepath}");
     let charkov = load_wordfile(filepath)?;
     for _ in 0..args.count {
-        println!("{}", charkov.word(args.min_len, args.max_len)?);
+        println!("{}", charkov.word(args.min_length, args.max_length)?);
     }
     Ok(())
 }
