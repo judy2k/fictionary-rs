@@ -3,7 +3,7 @@
 This is a port of my [Fictionary tool](https://github.com/judy2k/fictionary) to
 Rust. It currently works, just about, but it's still in the early stages.
 
-The wordlist file is loaded (on MacOS) from `$HOME/Library/Application Support/uk.co.judy.fictionary/english.0` 
+The wordlist file is currently loaded (on MacOS) from `$HOME/Library/Application Support/uk.co.judy.fictionary/english.0` 
 
 ## To-Do
 
