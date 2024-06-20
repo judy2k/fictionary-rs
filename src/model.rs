@@ -197,7 +197,7 @@ mod tests {
 
         let mut found = HashSet::new();
         for _ in 0..200 {
-            let word = charkov.word().unwrap();
+            let word = charkov.word(5, 8).unwrap();
             assert!(possible_words.contains(&word as &str));
             found.insert(word);
         }
