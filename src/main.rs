@@ -1,7 +1,7 @@
 mod model;
 
-use clap::Parser;
 use std::{fs, io::{self, BufRead, Read, Write}, path::{Path, PathBuf}};
+use clap::{Args, Parser, Subcommand};
 
 use directories::ProjectDirs;
 use model::{CharCounter, CharkovChain};
@@ -12,19 +12,44 @@ use thiserror::{self, Error};
 #[command(name = "Fictionary")]
 #[command(version = "0.0.1")]
 #[command(about, long_about = None)]
-struct Args {
-    #[arg(short = 'c', long, default_value_t = 1)]
-    count: usize,
-    #[arg(short = 'm', long, default_value_t = 4)]
-    min_length: usize,
-    #[arg(short = 'x', long, default_value_t = 10)]
-    max_length: usize,
+struct Cli {
+    #[command(subcommand)]
+    command: Option<Commands>,
+
+    #[command(flatten)]
+    words: WordsArgs
 }
 
+#[derive(Args, Debug)]
+struct WordsArgs {
+        #[arg(short = 'c', long, default_value_t = 1)]
+        count: usize,
+        #[arg(short = 'm', long, default_value_t = 4)]
+        min_length: usize,
+        #[arg(short = 'x', long, default_value_t = 10)]
+        max_length: usize,
+}
+
+#[derive(Subcommand, Debug)]
+enum Commands {
+    Words(WordsArgs),
+    Compile {
+        wordlist_path: PathBuf,
+        output_path: PathBuf,
+    }
+}
 
 fn main() -> eyre::Result<()> {
-    let args = Args::parse();
+    let args = Cli::parse();
 
+    match args.command {
+        Some(Commands::Words(ref wordsArgs)) => command_words(&args, &wordsArgs),
+        Some(Commands::Compile { wordlist_path, output_path }) => command_compile(&wordlist_path as &Path, &output_path),
+        None => command_words(&args, &args.words),
+    }
+}
+
+fn command_words(args: &Cli, words_args: &WordsArgs) -> eyre::Result<()> {
     let mut filepath: PathBuf = "./english.charkov".into();
     if let Some(project_dirs) = ProjectDirs::from("uk.co", "judy", "fictionary") {
         project_dirs.data_dir().clone_into(&mut filepath);
@@ -32,10 +57,14 @@ fn main() -> eyre::Result<()> {
     }
     
     let charkov = load_charkov(&filepath)?;
-    for _ in 0..args.count {
-        println!("{}", charkov.word(args.min_length, args.max_length)?);
+    for _ in 0..words_args.count {
+        println!("{}", charkov.word(words_args.min_length, words_args.max_length)?);
     }
 
+    Ok(())
+}
+
+fn command_compile(wordlist_path: &Path, output_path: &Path) -> eyre::Result<()> {
     Ok(())
 }
 
