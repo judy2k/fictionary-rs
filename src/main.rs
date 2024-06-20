@@ -43,13 +43,13 @@ fn main() -> eyre::Result<()> {
     let args = Cli::parse();
 
     match args.command {
-        Some(Commands::Words(ref wordsArgs)) => command_words(&args, &wordsArgs),
+        Some(Commands::Words(ref words_args)) => command_words(&args, words_args),
         Some(Commands::Compile { wordlist_path, output_path }) => command_compile(&wordlist_path as &Path, &output_path),
         None => command_words(&args, &args.words),
     }
 }
 
-fn command_words(args: &Cli, words_args: &WordsArgs) -> eyre::Result<()> {
+fn command_words(_args: &Cli, words_args: &WordsArgs) -> eyre::Result<()> {
     let mut filepath: PathBuf = "./english.charkov".into();
     if let Some(project_dirs) = ProjectDirs::from("uk.co", "judy", "fictionary") {
         project_dirs.data_dir().clone_into(&mut filepath);
@@ -65,6 +65,7 @@ fn command_words(args: &Cli, words_args: &WordsArgs) -> eyre::Result<()> {
 }
 
 fn command_compile(wordlist_path: &Path, output_path: &Path) -> eyre::Result<()> {
+    generate_charkov(wordlist_path, output_path)?;
     Ok(())
 }
 
