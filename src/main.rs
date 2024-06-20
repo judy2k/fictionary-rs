@@ -41,6 +41,6 @@ fn load_wordfile(path: &str) -> io::Result<CharkovChain> {
         }
     }
 
-    return Ok(result.into());
+    Ok(result.into())
 }
 

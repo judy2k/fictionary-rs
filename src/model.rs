@@ -22,7 +22,7 @@ impl CharCounter {
         let word = word.as_ref().to_string();
 
         let mut chars = vec![None, None];
-        chars.extend(word.chars().map(|c| Some(c)));
+        chars.extend(word.chars().map(Some));
         chars.push(None);
 
         for i in 0..chars.len() - 2 {
@@ -32,7 +32,7 @@ impl CharCounter {
     }
 
     fn increment(&mut self, k: (Option<char>, Option<char>), v: Option<char>) {
-        self.counts.entry(k).or_insert(Counter::new())[&v] += 1;
+        self.counts.entry(k).or_default()[&v] += 1;
     }
 }
 
