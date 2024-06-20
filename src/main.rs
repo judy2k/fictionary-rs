@@ -33,11 +33,9 @@ fn main() -> eyre::Result<()> {
 fn load_wordfile(path: &str) -> io::Result<CharkovChain> {
     let buf = io::BufReader::new(fs::File::open(path)?).lines();
     let mut result = CharCounter::new();
-    for maybe_line in buf {
-        if let Ok(word) = maybe_line {
-            if !word.starts_with(|c: char| c.is_uppercase()) && !word.contains('\'') {
-                result.feed_word(word);
-            }
+    for word in buf.map_while(Result::ok) {
+        if !word.starts_with(|c: char| c.is_uppercase()) && !word.contains('\'') {
+            result.feed_word(word);
         }
     }
 

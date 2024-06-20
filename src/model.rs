@@ -5,8 +5,11 @@ use counter::Counter;
 use thiserror::Error;
 use weighted_rand::{builder::NewBuilder, builder::WalkerTableBuilder, table::WalkerTable};
 
+type MaybeChar = Option<char>;
+type CharkovKey = (MaybeChar, MaybeChar);
+
 pub struct CharCounter {
-    counts: HashMap<(Option<char>, Option<char>), Counter<Option<char>, u32>>,
+    counts: HashMap<CharkovKey, Counter<MaybeChar, u32>>,
     wordset: HashSet<String>,
 }
 
@@ -31,33 +34,39 @@ impl CharCounter {
         self.wordset.insert(word);
     }
 
-    fn increment(&mut self, k: (Option<char>, Option<char>), v: Option<char>) {
+    /// Increment the count for the "next char" by 1.
+    ///
+    /// k: (Some('a'), Some('b')), v: Some('c') means that we have
+    /// encountered an instance of 'ab' being followed by the char 'c'.
+    /// k: (None, None) is considered the key for a word starting char.
+    /// v: None is considered the value indicating the end of word.
+    fn increment(&mut self, k: CharkovKey, v: MaybeChar) {
         self.counts.entry(k).or_default()[&v] += 1;
     }
 }
 
-/// WalkerTable only returns the index of the selected weight, so we also need to keep a vec of `Option<char>`s to select from.
+/// WalkerTable only returns the index of the selected weight, so we also need to keep a vec of `MaybeChar`s to select from.
 struct CharChooser {
-    chars: Vec<Option<char>>,
+    chars: Vec<MaybeChar>,
     chooser: WalkerTable,
 }
 
 impl CharChooser {
-    fn new(counter: Counter<Option<char>, u32>) -> Self {
+    fn new(counter: Counter<MaybeChar, u32>) -> Self {
         let map = counter.into_map();
-        let (chars, counts) = map.into_iter().unzip::<Option<char>, u32, _, Vec<_>>();
+        let (chars, counts) = map.into_iter().unzip::<MaybeChar, u32, _, Vec<_>>();
         let wt = WalkerTableBuilder::new(&counts).build();
         Self { chars, chooser: wt }
     }
 
-    fn next(&self) -> Option<char> {
+    fn next(&self) -> MaybeChar {
         self.chars[self.chooser.next()]
     }
 }
 
 /// A Markov chain, for characters. I'm here all week. Try the fish.
 pub struct CharkovChain {
-    chain: HashMap<(Option<char>, Option<char>), CharChooser>,
+    chain: HashMap<CharkovKey, CharChooser>,
     words: HashSet<String>,
 }
 
@@ -73,7 +82,10 @@ impl CharkovChain {
     pub fn word(&self, min_len: usize, max_len: usize) -> Result<String, WordGenerationError> {
         for _ in 0..1000 {
             let candidate = self.candidate_word()?;
-            if min_len <= candidate.len() && candidate.len() <= max_len && !self.words.contains(&candidate) {
+            if min_len <= candidate.len()
+                && candidate.len() <= max_len
+                && !self.words.contains(&candidate)
+            {
                 return Ok(candidate);
             }
         }
@@ -83,18 +95,14 @@ impl CharkovChain {
     fn candidate_word(&self) -> Result<String, WordGenerationError> {
         let mut result = String::new();
         let mut state = (None, None);
-        loop {
-            if let Some(c) = self
-                .chain
-                .get(&state)
-                .ok_or(WordGenerationError::InvalidMarkovChain)?
-                .next()
-            {
-                result.push(c);
-                state = (state.1, Some(c));
-            } else {
-                break;
-            }
+        while let Some(c) = self
+            .chain
+            .get(&state)
+            .ok_or(WordGenerationError::InvalidMarkovChain)?
+            .next()
+        {
+            result.push(c);
+            state = (state.1, Some(c));
         }
         Ok(result)
     }
