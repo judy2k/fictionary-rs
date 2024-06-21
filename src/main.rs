@@ -49,6 +49,7 @@ enum Commands {
 }
 
 fn main() -> Result<()> {
+    color_eyre::install()?;
     let args = Cli::parse();
 
     match &args.command {
@@ -140,7 +141,8 @@ fn load_wordfile(path: impl AsRef<Utf8Path>) -> io::Result<CharkovChain> {
     let buf = io::BufReader::new(fs::File::open(path.as_ref())?).lines();
     let mut result = CharCounter::new();
     for word in buf.map_while(Result::ok) {
-        if !word.starts_with(|c: char| c.is_uppercase()) && !word.contains('\'') {
+        let word = word.trim();
+        if word.len() >= 3 {
             result.feed_word(word);
         }
     }
