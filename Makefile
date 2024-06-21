@@ -20,7 +20,13 @@ data/british.words: $(BRITISH_SRC)
 %.fictionary: %.words
 	cargo run -- compile $< $@
 
+install: compile
+	@cargo install --path .
+	@DEST_DIR='$(shell cargo run -- data-dir)'; \
+	mkdir -p "$${DEST_DIR}"; \
+	cp $(CHARKOV_FILES)  "$${DEST_DIR}"
+
 clean:
 	rm -f $(WORD_FILES) $(CHARKOV_FILES)
 
-.PHONY: all clean wordlists
+.PHONY: all clean compile install wordlists
