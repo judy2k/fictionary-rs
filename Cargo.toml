@@ -1,12 +1,8 @@
 [package]
-name = "fictionary-rs"
+name = "fictionary"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
-
-[[bin]]
-name = "fictionary"
-path = "src/main.rs"
 
 [dependencies]
 clap = { version = "4.5.7", features = ["derive"] }
