@@ -65,6 +65,16 @@ fn main() -> Result<()> {
 }
 
 fn command_words(_args: &Cli, words_args: &WordsArgs) -> Result<()> {
+    if words_args.min_length < 3 {
+        return Err(eyre!("--min-length must be at least 3."));
+    }
+    if words_args.max_length < 5 {
+        return Err(eyre!("--min-length must be at least 5."));
+    }
+    if words_args.min_length > words_args.max_length {
+        return Err(eyre!("--min-length cannot be bigger than --max-length"));
+    }
+
     let mut filepath: Utf8PathBuf = "./american.fictionary".into();
     if let Some(ref provided_path) = words_args.fictionary_file {
         filepath.clone_from(provided_path);
