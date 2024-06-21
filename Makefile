@@ -21,7 +21,7 @@ data/british.words: $(BRITISH_SRC)
 	cargo run -- compile $< $@
 
 install: compile
-	@cargo install --path .
+	@cargo install --force --path .
 	@DEST_DIR='$(shell cargo run -- data-dir)'; \
 	mkdir -p "$${DEST_DIR}"; \
 	cp $(CHARKOV_FILES)  "$${DEST_DIR}"
