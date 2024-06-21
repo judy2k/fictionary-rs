@@ -28,23 +28,34 @@ struct Cli {
 
 #[derive(Args, Debug)]
 struct WordsArgs {
+    /// The number of fictionary words to be generated.
     #[arg(short = 'c', long, default_value_t = 1)]
     count: usize,
+    /// The minimum word length
     #[arg(short = 'm', long, default_value_t = 4)]
     min_length: usize,
+    /// The maximum word length
     #[arg(short = 'x', long, default_value_t = 10)]
     max_length: usize,
-    #[arg(short = 'f', long)]
+    /// The path to a fictionary file which will be used to generate words.
+    #[arg(short = 'f', long, value_name="FILE")]
     fictionary_file: Option<Utf8PathBuf>,
 }
 
 #[derive(Subcommand, Debug)]
 enum Commands {
+    /// Generate one or more fictionary words.
     Words(WordsArgs),
+    /// Compile a fictionary from a wordlist file.
     Compile {
+        /// The path to a wordlist file. (A text file with one word per line)
+        #[arg(value_name="WORDLIST")]
         wordlist_path: Utf8PathBuf,
+        /// The path to write the output fictionary file.
+        #[arg(value_name="OUTPUT-PATH")]
         output_path: Utf8PathBuf,
     },
+    /// Print out the location of the default fictionary files.
     DataDir,
 }
 
