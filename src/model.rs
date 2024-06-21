@@ -47,6 +47,12 @@ impl CharCounter {
     }
 }
 
+impl Default for CharCounter {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 /// WalkerTable only returns the index of the selected weight, so we also need to keep a vec of `MaybeChar`s to select from.
 #[derive(Serialize, Deserialize)]
 struct CharChooser {
@@ -64,6 +70,12 @@ impl CharChooser {
 
     fn next(&self) -> MaybeChar {
         self.chars[self.chooser.next()]
+    }
+}
+
+impl From<Counter<MaybeChar, u32>> for CharChooser {
+    fn from(value: Counter<MaybeChar, u32>) -> Self {
+        Self::new(value)
     }
 }
 
@@ -118,7 +130,7 @@ impl From<CharCounter> for CharkovChain {
             chain: counter
                 .counts
                 .into_iter()
-                .map(|(k, v)| (k, CharChooser::new(v)))
+                .map(|(k, v)| (k, CharChooser::from(v)))
                 .collect(),
             words: counter.wordset,
         }
