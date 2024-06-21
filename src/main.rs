@@ -63,12 +63,12 @@ fn main() -> eyre::Result<()> {
 }
 
 fn command_words(_args: &Cli, words_args: &WordsArgs) -> eyre::Result<()> {
-    let mut filepath: PathBuf = "./english.fictionary".into();
+    let mut filepath: PathBuf = "./american.fictionary".into();
     if let Some(ref provided_path) = words_args.fictionary_file {
         filepath.clone_from(provided_path);
     } else if let Some(project_dirs) = ProjectDirs::from("uk.co", "judy", "fictionary") {
         project_dirs.data_dir().clone_into(&mut filepath);
-        filepath.push("english.fictionary");
+        filepath.push("american.fictionary");
     }
 
     let charkov = load_charkov(&filepath)?;
