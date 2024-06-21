@@ -3,7 +3,7 @@ BRITISH_SRC := $(ENGLISH_SRC) data/ispell_wordlist/british.[0-2]
 AMERICAN_SRC := $(ENGLISH_SRC) data/ispell_wordlist/american.[0-2]
 
 WORD_FILES := data/english.words data/british.words data/american.words
-CHARKOV_FILES := data/english.charkov data/british.charkov data/american.charkov
+CHARKOV_FILES := data/english.fictionary data/british.fictionary data/american.fictionary
 
 all compile: $(CHARKOV_FILES)
 wordlists: $(WORD_FILES)
@@ -17,7 +17,7 @@ data/american.words: $(AMERICAN_SRC)
 data/british.words: $(BRITISH_SRC)
 	rg -IN '^[a-z]+$$' $^ | sort | sort -u > $@
 
-%.charkov: %.words
+%.fictionary: %.words
 	cargo run -- compile $< $@
 
 clean:
