@@ -1,5 +1,7 @@
 # Fictionary (in Rust)
 
+![Rust Build](https://github.com/judy2k/fictionary-rs/actions/workflows/rust.yml/badge.svg)
+
 This is a port of my [Fictionary tool](https://github.com/judy2k/fictionary) to
 Rust. It currently works, just about, but it's still in the early stages.
 
@@ -9,8 +11,6 @@ The wordlist file is currently loaded (on MacOS) from `$HOME/Library/Application
 
 In rough priority order:
 
-* Add the ability to serialize the CharkovChain to an appropriate file format,
-  so that it doesn't need to be generated from a word list each time.
 * Make wordlist/charkov file loading a bit more idiomatic and cascading from shared to user directories.
 * Publish to crates.io?
 
