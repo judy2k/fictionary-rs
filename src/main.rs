@@ -4,7 +4,6 @@ use clap::{Args, Parser, Subcommand};
 use std::{
     fs,
     io::{self, BufRead, Read, Write},
-
 };
 
 use camino::{Utf8Path, Utf8PathBuf};
@@ -91,8 +90,10 @@ fn command_words(_args: &Cli, words_args: &WordsArgs) -> Result<()> {
     if let Some(ref provided_path) = words_args.fictionary_file {
         filepath.clone_from(provided_path);
     } else if let Some(project_dirs) = ProjectDirs::from("uk.co", "judy", "fictionary") {
-        filepath = Utf8PathBuf::from_path_buf(project_dirs.data_dir().into()).map_err(|p| eyre!(p.to_string_lossy().to_string())).wrap_err("Only UTF-8 file paths are supported.")?;
-        filepath.push("american.fictionary");
+        filepath = Utf8PathBuf::from_path_buf(project_dirs.data_dir().into())
+            .map_err(|p| eyre!(p.to_string_lossy().to_string()))
+            .wrap_err("Only UTF-8 file paths are supported.")?
+            .join("american.fictionary");
     }
 
     let charkov = load_charkov(&filepath)?;
