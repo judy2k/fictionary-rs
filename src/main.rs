@@ -9,7 +9,7 @@ use std::{
 
 use camino::{Utf8Path, Utf8PathBuf};
 use directories::ProjectDirs;
-use eyre::{Result, eyre, WrapErr};
+use eyre::{eyre, Result, WrapErr};
 use model::{CharCounter, CharkovChain};
 use postcard::{from_bytes, to_allocvec};
 use thiserror::{self, Error};
@@ -38,7 +38,7 @@ struct WordsArgs {
     #[arg(short = 'x', long, default_value_t = 10)]
     max_length: usize,
     /// The path to a fictionary file which will be used to generate words.
-    #[arg(short = 'f', long, value_name="FILE")]
+    #[arg(short = 'f', long, value_name = "FILE")]
     fictionary_file: Option<Utf8PathBuf>,
 }
 
@@ -49,10 +49,10 @@ enum Commands {
     /// Compile a fictionary from a wordlist file.
     Compile {
         /// The path to a wordlist file. (A text file with one word per line)
-        #[arg(value_name="WORDLIST")]
+        #[arg(value_name = "WORDLIST")]
         wordlist_path: Utf8PathBuf,
         /// The path to write the output fictionary file.
-        #[arg(value_name="OUTPUT-PATH")]
+        #[arg(value_name = "OUTPUT-PATH")]
         output_path: Utf8PathBuf,
     },
     /// Print out the location of the default fictionary files.
