@@ -1,21 +1,40 @@
 mod model;
 
+#[cfg(target_os = "windows")]
+mod sys_win;
+#[cfg(target_os = "windows")]
+use sys_win as sys;
+
+#[cfg(any(target_os = "macos", target_os = "ios"))]
+mod sys_mac;
+#[cfg(any(target_os = "macos", target_os = "ios"))]
+use sys_mac as sys;
+
+#[cfg(not(any(target_os = "windows", target_os = "macos", target_os = "ios",)))]
+mod sys_linux;
+#[cfg(not(any(target_os = "windows", target_os = "macos", target_os = "ios",)))]
+use sys_linux as sys;
+
 use clap::{Args, Parser, Subcommand};
 use std::{
-    fs,
-    io::{self, BufRead, Read, Write},
+    collections::HashMap, fs, io::{self, BufRead, Read, Write}
 };
 
 use camino::{Utf8Path, Utf8PathBuf};
-use directories::ProjectDirs;
-use eyre::{eyre, Result, WrapErr};
+use eyre::{eyre, Result};
 use model::{CharCounter, CharkovChain};
 use postcard::{from_bytes, to_allocvec};
 use thiserror::{self, Error};
 
+const QUALIFIER: &str = "uk.co";
+const ORG: &str = "judy";
+const APP : &str = "fictionary";
+const VERSION: &str = "0.0.1";
+const DEFAULT_FICTIONARY: &str = "american";
+
 #[derive(Parser, Debug)]
-#[command(name = "Fictionary")]
-#[command(version = "0.0.1")]
+#[command(name = APP)]
+#[command(version = VERSION)]
 #[command(about, long_about = None)]
 struct Cli {
     #[command(subcommand)]
@@ -37,8 +56,11 @@ struct WordsArgs {
     #[arg(short = 'x', long, default_value_t = 10)]
     max_length: usize,
     /// The path to a fictionary file which will be used to generate words.
-    #[arg(short = 'f', long, value_name = "FILE")]
+    #[arg(short = 'p', long, value_name = "FILE")]
     fictionary_file: Option<Utf8PathBuf>,
+    /// The name of a fictionary to be used to generate words.
+    #[arg(short = 'f', long, value_name = "NAME")]
+    fictionary: Option<String>,
 }
 
 #[derive(Subcommand, Debug)]
@@ -54,8 +76,12 @@ enum Commands {
         #[arg(value_name = "OUTPUT-PATH")]
         output_path: Utf8PathBuf,
     },
-    /// Print out the location of the default fictionary files.
+    /// Print out a (probably) writeable location of fictionary files.
     DataDir,
+    /// Print out the locations to be searched for fictionary files.
+    DataDirs,
+    /// Print out the available fictionary names.
+    Names,
 }
 
 fn main() -> Result<()> {
@@ -69,10 +95,27 @@ fn main() -> Result<()> {
                 wordlist_path,
                 output_path,
             } => command_compile(&wordlist_path as &Utf8Path, &output_path),
-            Commands::DataDir => command_datadir(&args),
+            Commands::DataDirs => command_datadirs(),
+            Commands::DataDir => command_datadir(),
+            Commands::Names => command_fictionaries()
         },
         None => command_words(&args, &args.words),
     }
+}
+
+fn available_fictionary_files(data_dirs: Vec<Utf8PathBuf>) -> Result<HashMap<String, Utf8PathBuf>> {
+    let mut result = HashMap::new();
+
+    for dir in data_dirs.into_iter().filter(|p| p.exists()) {
+        for entry in dir.read_dir_utf8()? {
+            let entry = entry?;
+            if let Some(name) = entry.file_name().strip_suffix(".fictionary") {
+                result.insert(name.to_string(), entry.into_path());
+            }
+        }
+    }
+
+    Ok(result)
 }
 
 fn command_words(_args: &Cli, words_args: &WordsArgs) -> Result<()> {
@@ -89,11 +132,17 @@ fn command_words(_args: &Cli, words_args: &WordsArgs) -> Result<()> {
     let mut filepath: Utf8PathBuf = "./american.fictionary".into();
     if let Some(ref provided_path) = words_args.fictionary_file {
         filepath.clone_from(provided_path);
-    } else if let Some(project_dirs) = ProjectDirs::from("uk.co", "judy", "fictionary") {
-        filepath = Utf8PathBuf::from_path_buf(project_dirs.data_dir().into())
-            .map_err(|p| eyre!(p.to_string_lossy().to_string()))
-            .wrap_err("Only UTF-8 file paths are supported.")?
-            .join("american.fictionary");
+    } else {
+        let fictionary_files = available_fictionary_files(data_dirs())?;
+        
+        let fictionary_name = DEFAULT_FICTIONARY;
+        
+        if let Some(default_path) = fictionary_files.get(fictionary_name) {
+            filepath.clone_from(default_path);
+        } else {
+            // TODO: List paths searched in error message.
+            return Err(eyre!("Could not find {fictionary_name}.fictionary in data dirs!"));
+        }
     }
 
     let charkov = load_charkov(&filepath)?;
@@ -112,10 +161,32 @@ fn command_compile(wordlist_path: &Utf8Path, output_path: &Utf8Path) -> Result<(
     Ok(())
 }
 
-fn command_datadir(_args: &Cli) -> Result<()> {
-    if let Some(project_dirs) = ProjectDirs::from("uk.co", "judy", "fictionary") {
-        println!("{}", project_dirs.data_dir().to_string_lossy());
+fn command_datadirs() -> Result<()> {
+    for dir in sys::data_dirs(QUALIFIER, ORG, APP) {
+        println!("{dir}")
     }
+    Ok(())
+}
+
+fn command_datadir() -> Result<()> {
+    let dirs = sys::data_dirs(QUALIFIER, ORG, APP);
+    println!("{}", dirs[dirs.len() - 1]);
+    Ok(())
+}
+
+fn data_dirs() -> Vec<Utf8PathBuf> {
+    sys::data_dirs(QUALIFIER, ORG, APP)
+}
+
+fn command_fictionaries() -> Result<()> {
+    let file_map = available_fictionary_files(data_dirs())?;
+    let mut fictionary_files: Vec<_> = file_map.keys().collect();
+    fictionary_files.sort();
+
+    for name in fictionary_files {
+        println!("{name}");
+    }
+
     Ok(())
 }
 
