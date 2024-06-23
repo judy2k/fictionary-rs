@@ -65,7 +65,7 @@ struct WordsArgs {
 
 #[derive(Subcommand, Debug)]
 enum Commands {
-    /// Generate one or more fictionary words.
+    /// Generate one or more fictionary words. This is the default command.
     Words(WordsArgs),
     /// Compile a fictionary from a wordlist file.
     Compile {
