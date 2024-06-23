@@ -29,7 +29,7 @@ use thiserror::{self, Error};
 const QUALIFIER: &str = "uk.co";
 const ORG: &str = "judy";
 const APP : &str = "fictionary";
-const VERSION: &str = "0.0.1";
+const VERSION: &str = "0.1.1";
 const DEFAULT_FICTIONARY: &str = "american";
 
 #[derive(Parser, Debug)]
