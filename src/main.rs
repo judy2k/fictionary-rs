@@ -94,7 +94,7 @@ fn main() -> Result<()> {
             Commands::Compile {
                 wordlist_path,
                 output_path,
-            } => command_compile(&wordlist_path as &Utf8Path, &output_path),
+            } => command_compile(wordlist_path as &Utf8Path, output_path),
             Commands::DataDirs => command_datadirs(),
             Commands::DataDir => command_datadir(),
             Commands::Names => command_fictionaries()

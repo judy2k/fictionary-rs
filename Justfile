@@ -6,3 +6,6 @@ compile:
 
 clean:
     make clean
+
+test:
+    cargo nextest run

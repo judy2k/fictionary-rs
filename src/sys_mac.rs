@@ -10,8 +10,8 @@ use directories::ProjectDirs;
 /// All directories are guaranteed to exist, but may not be writeable.
 pub fn data_dirs(qualifier: &str, organization: &str, application: &str) -> Vec<Utf8PathBuf> {
     // we should replace more characters, according to RFC1034 identifier rules
-    let organization = organization.replace(" ", "-");
-    let application  = application.replace(" ", "-");
+    let organization = organization.replace(' ', "-");
+    let application  = application.replace(' ', "-");
     let mut parts    = vec![qualifier, &organization, &application]; parts.retain(|e| !e.is_empty());
     let bundle_id    = parts.join(".");
 
