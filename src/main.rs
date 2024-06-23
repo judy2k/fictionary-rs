@@ -135,9 +135,9 @@ fn command_words(_args: &Cli, words_args: &WordsArgs) -> Result<()> {
     } else {
         let fictionary_files = available_fictionary_files(data_dirs())?;
         
-        let fictionary_name = DEFAULT_FICTIONARY;
+        let fictionary_name = words_args.fictionary.clone().unwrap_or(DEFAULT_FICTIONARY.into());
         
-        if let Some(default_path) = fictionary_files.get(fictionary_name) {
+        if let Some(default_path) = fictionary_files.get(&fictionary_name) {
             filepath.clone_from(default_path);
         } else {
             // TODO: List paths searched in error message.
@@ -145,6 +145,8 @@ fn command_words(_args: &Cli, words_args: &WordsArgs) -> Result<()> {
         }
     }
 
+    // TODO: Implement verbose logging and fix next line.
+    // println!("Loading from path {filepath}");
     let charkov = load_charkov(&filepath)?;
     for _ in 0..words_args.count {
         println!(
