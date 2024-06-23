@@ -1,5 +1,6 @@
 [package]
 name = "fictionary"
+description = "A command-line tool that generates non-existent words."
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
