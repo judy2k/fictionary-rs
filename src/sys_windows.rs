@@ -8,7 +8,7 @@ use directories::ProjectDirs;
 /// Dirs are returned in increasing order of precedence - i.e.: local directories are last,
 /// because they take precedence over shared directories.
 /// All directories are guaranteed to exist, but may not be writeable.
-fn data_dirs(qualifier: &str, organization: &str, application: &str) -> Vec<Utf8PathBuf> {
+pub fn data_dirs(qualifier: &str, organization: &str, application: &str) -> Vec<Utf8PathBuf> {
     let mut result = Vec::new();
 
     // Shared directory goes here.
