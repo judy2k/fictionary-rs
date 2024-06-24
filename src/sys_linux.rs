@@ -9,7 +9,11 @@ use directories::ProjectDirs;
 pub fn data_dirs(qualifier: &str, organization: &str, application: &str) -> Vec<Utf8PathBuf> {
     let mut result = Vec::new();
 
-    // Shared directory goes here.
+    // Shared directories go here.
+    result.append(&mut vec![
+        format!("/usr/share/{application}").into(),
+        format!("/usr/local/share/{application}").into(),
+    ]);
 
     // Directory in home dir:
     if let Some(dirs) = ProjectDirs::from(qualifier, organization, application) {
