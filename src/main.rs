@@ -1,9 +1,9 @@
 mod model;
 
 #[cfg(target_os = "windows")]
-mod sys_win;
+mod sys_windows;
 #[cfg(target_os = "windows")]
-use sys_win as sys;
+use sys_windows as sys;
 
 #[cfg(any(target_os = "macos", target_os = "ios"))]
 mod sys_mac;

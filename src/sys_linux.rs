@@ -1,5 +1,3 @@
-use std::path::PathBuf;
-
 use camino::Utf8PathBuf;
 use directories::ProjectDirs;
 
@@ -21,4 +19,15 @@ pub fn data_dirs(qualifier: &str, organization: &str, application: &str) -> Vec<
     }
 
     result
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_linux() {
+        let dirs = data_dirs("uk.co", "judy", "fictionary");
+        assert!(dirs.len() > 0);
+    }
 }
