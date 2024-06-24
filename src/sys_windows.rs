@@ -2,7 +2,7 @@ use camino::Utf8PathBuf;
 use directories::ProjectDirs;
 
 /// Return a (potentially empty) Vec of data directories for the platform.
-/// 
+///
 /// Dirs are returned in increasing order of precedence - i.e.: local directories are last,
 /// because they take precedence over shared directories.
 /// All directories are guaranteed to exist, but may not be writeable.

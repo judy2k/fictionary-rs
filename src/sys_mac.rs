@@ -4,16 +4,17 @@ use camino::Utf8PathBuf;
 use directories::ProjectDirs;
 
 /// Return a (potentially empty) Vec of data directories for the platform.
-/// 
+///
 /// Dirs are returned in increasing order of precedence - i.e.: local directories are last,
 /// because they take precedence over shared directories.
 /// All directories are guaranteed to exist, but may not be writeable.
 pub fn data_dirs(qualifier: &str, organization: &str, application: &str) -> Vec<Utf8PathBuf> {
     // we should replace more characters, according to RFC1034 identifier rules
     let organization = organization.replace(' ', "-");
-    let application  = application.replace(' ', "-");
-    let mut parts    = vec![qualifier, &organization, &application]; parts.retain(|e| !e.is_empty());
-    let bundle_id    = parts.join(".");
+    let application = application.replace(' ', "-");
+    let mut parts = vec![qualifier, &organization, &application];
+    parts.retain(|e| !e.is_empty());
+    let bundle_id = parts.join(".");
 
     let mut result = Vec::new();
 

@@ -17,7 +17,9 @@ use sys_linux as sys;
 
 use clap::{Args, Parser, Subcommand};
 use std::{
-    collections::HashMap, fs, io::{self, BufRead, Read, Write}
+    collections::HashMap,
+    fs,
+    io::{self, BufRead, Read, Write},
 };
 
 use camino::{Utf8Path, Utf8PathBuf};
@@ -28,7 +30,7 @@ use thiserror::{self, Error};
 
 const QUALIFIER: &str = "uk.co";
 const ORG: &str = "judy";
-const APP : &str = "fictionary";
+const APP: &str = "fictionary";
 const VERSION: &str = "0.1.1";
 const DEFAULT_FICTIONARY: &str = "american";
 
@@ -97,7 +99,7 @@ fn main() -> Result<()> {
             } => command_compile(wordlist_path as &Utf8Path, output_path),
             Commands::DataDirs => command_datadirs(),
             Commands::DataDir => command_datadir(),
-            Commands::Names => command_fictionaries()
+            Commands::Names => command_fictionaries(),
         },
         None => command_words(&args, &args.words),
     }
@@ -134,14 +136,19 @@ fn command_words(_args: &Cli, words_args: &WordsArgs) -> Result<()> {
         filepath.clone_from(provided_path);
     } else {
         let fictionary_files = available_fictionary_files(data_dirs())?;
-        
-        let fictionary_name = words_args.fictionary.clone().unwrap_or(DEFAULT_FICTIONARY.into());
-        
+
+        let fictionary_name = words_args
+            .fictionary
+            .clone()
+            .unwrap_or(DEFAULT_FICTIONARY.into());
+
         if let Some(default_path) = fictionary_files.get(&fictionary_name) {
             filepath.clone_from(default_path);
         } else {
             // TODO: List paths searched in error message.
-            return Err(eyre!("Could not find {fictionary_name}.fictionary in data dirs!"));
+            return Err(eyre!(
+                "Could not find {fictionary_name}.fictionary in data dirs!"
+            ));
         }
     }
 
