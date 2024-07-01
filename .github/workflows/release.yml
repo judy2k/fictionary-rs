@@ -237,22 +237,22 @@ jobs:
           "$PWD/target:/target:Z" \
           "ghcr.io/cross-rs/${{ matrix.target }}:main" \
           "${{ matrix.qemu }}" "/$BIN" \
-            "$BIN" completion fish > "$ARCHIVE/complete/fictionary.fish"
+            completion fish > "$ARCHIVE/complete/fictionary.fish"
         docker run --rm -v \
           "$PWD/target:/target:Z" \
           "ghcr.io/cross-rs/${{ matrix.target }}:main" \
           "${{ matrix.qemu }}" "/$BIN" \
-            "$BIN" completion powershell > "$ARCHIVE/complete/_fictionary.ps1"
+            completion powershell > "$ARCHIVE/complete/_fictionary.ps1"
         docker run --rm -v \
           "$PWD/target:/target:Z" \
           "ghcr.io/cross-rs/${{ matrix.target }}:main" \
           "${{ matrix.qemu }}" "/$BIN" \
-            "$BIN" completion zsh > "$ARCHIVE/complete/_fictionary"
+            completion zsh > "$ARCHIVE/complete/_fictionary"
         docker run --rm -v \
           "$PWD/target:/target:Z" \
           "ghcr.io/cross-rs/${{ matrix.target }}:main" \
           "${{ matrix.qemu }}" "/$BIN" \
-            "$BIN" completion man > "$ARCHIVE/doc/fictionary.1"
+            completion man > "$ARCHIVE/doc/fictionary.1"
 
     - name: Build archive (Windows)
       shell: bash
