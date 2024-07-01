@@ -15,7 +15,9 @@ mod sys_linux;
 #[cfg(not(any(target_os = "windows", target_os = "macos", target_os = "ios",)))]
 use sys_linux as sys;
 
-use clap::{Args, Parser, Subcommand};
+use clap::{Args, Command, CommandFactory, Parser, Subcommand, ValueEnum};
+use clap_complete::{shells::Bash, shells::Fish, shells::Zsh, shells::PowerShell, generate};
+use clap_mangen;
 use std::{
     collections::HashMap,
     fs,
@@ -84,6 +86,23 @@ enum Commands {
     DataDirs,
     /// Print out the available fictionary names.
     Names,
+    /// Generate completion files for different shells.
+    #[clap(hide=true)]
+    Completion(CompletionArgs),
+}
+
+#[derive(Args, Debug)]
+struct CompletionArgs {
+    target: CompletionTarget,
+}
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
+enum CompletionTarget {
+    Bash,
+    Fish,
+    Zsh,
+    Powershell,
+    Man,
 }
 
 fn main() -> Result<()> {
@@ -100,6 +119,8 @@ fn main() -> Result<()> {
             Commands::DataDirs => command_datadirs(),
             Commands::DataDir => command_datadir(),
             Commands::Names => command_fictionaries(),
+            Commands::Completion(completion_args) => command_completion(&mut Cli::command(), &completion_args),
+            
         },
         None => command_words(&args, &args.words),
     }
@@ -167,6 +188,22 @@ fn command_words(_args: &Cli, words_args: &WordsArgs) -> Result<()> {
 
 fn command_compile(wordlist_path: &Utf8Path, output_path: &Utf8Path) -> Result<()> {
     save_charkov(&load_wordfile(wordlist_path)?, output_path)?;
+    Ok(())
+}
+
+fn command_completion(cmd: &mut Command, completion_args: &CompletionArgs) -> Result<()> {
+    match completion_args.target {
+        CompletionTarget::Bash => generate(Bash, cmd, APP, &mut io::stdout()),
+        CompletionTarget::Fish => generate(Fish, cmd, APP, &mut io::stdout()),
+        CompletionTarget::Zsh => generate(Zsh, cmd, APP, &mut io::stdout()),
+        CompletionTarget::Powershell => generate(PowerShell, cmd, APP, &mut io::stdout()),
+        CompletionTarget::Man => {
+            let man = clap_mangen::Man::new(cmd.to_owned());
+            man.render(&mut io::stdout())?
+        },
+
+    };
+
     Ok(())
 }
 

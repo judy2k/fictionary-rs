@@ -8,6 +8,7 @@ license = "MIT"
 [dependencies]
 camino = "1.1.7"
 clap = { version = "4.5.7", features = ["derive"] }
+clap_complete = "4.5.6"
 color-eyre = { version = "0.6", default-features = false }
 counter = "0.5.7"
 directories = "5.0.1"
@@ -16,3 +17,4 @@ postcard = { version = "1.0.8", features = ["use-std", "alloc"] }
 serde = "1.0.203"
 thiserror = "1.0.61"
 weighted_rand = "0.4.2"
+clap_mangen = "0.2.21"
