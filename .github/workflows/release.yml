@@ -227,50 +227,53 @@ jobs:
       if: matrix.qemu != ''
       shell: bash
       run: |
-        docker run --rm -v \
-          "$PWD/target:/target:Z" \
+        docker run --rm \
+          -v "$PWD/target:/target:Z" \
           "ghcr.io/cross-rs/${{ matrix.target }}:main" \
           "${{ matrix.qemu }}" "/$BIN" --version
-        docker run --rm -v \
-          "$PWD/target:/target:Z" \
+        docker run --rm \
+          -v "$PWD/target:/target:Z" \
           "ghcr.io/cross-rs/${{ matrix.target }}:main" \
           "${{ matrix.qemu }}" "/$BIN" \
             completion bash > "$ARCHIVE/complete/fictionary.bash"
-        docker run --rm -v \
-          "$PWD/target:/target:Z" \
+        docker run --rm \
+          -v "$PWD/target:/target:Z" \
           "ghcr.io/cross-rs/${{ matrix.target }}:main" \
           "${{ matrix.qemu }}" "/$BIN" \
             completion fish > "$ARCHIVE/complete/fictionary.fish"
-        docker run --rm -v \
-          "$PWD/target:/target:Z" \
+        docker run --rm \
+          -v "$PWD/target:/target:Z" \
           "ghcr.io/cross-rs/${{ matrix.target }}:main" \
           "${{ matrix.qemu }}" "/$BIN" \
             completion powershell > "$ARCHIVE/complete/_fictionary.ps1"
-        docker run --rm -v \
-          "$PWD/target:/target:Z" \
+        docker run --rm \
+          -v "$PWD/target:/target:Z" \
           "ghcr.io/cross-rs/${{ matrix.target }}:main" \
           "${{ matrix.qemu }}" "/$BIN" \
             completion zsh > "$ARCHIVE/complete/_fictionary"
-        docker run --rm -v \
-          "$PWD/target:/target:Z" \
+        docker run --rm \
+          -v "$PWD/target:/target:Z" \
           "ghcr.io/cross-rs/${{ matrix.target }}:main" \
           "${{ matrix.qemu }}" "/$BIN" \
             completion man > "$ARCHIVE/doc/fictionary.1"
-        docker run --rm -v \
-          "$PWD/target:/target:Z" \
+        docker run --rm \
+          -v "$PWD/target:/target:Z" \
+          -v "$PWD/data:/data" \
           "ghcr.io/cross-rs/${{ matrix.target }}:main" \
           "${{ matrix.qemu }}" "/$BIN" \
-            compile data/american.words "$ARCHIVE/data/american.fictionary"
-        docker run --rm -v \
-          "$PWD/target:/target:Z" \
+            compile /data/american.words "$ARCHIVE/data/american.fictionary"
+        docker run --rm \
+          -v "$PWD/target:/target:Z" \
+          -v "$PWD/data:/data" \
           "ghcr.io/cross-rs/${{ matrix.target }}:main" \
           "${{ matrix.qemu }}" "/$BIN" \
-            compile data/british.words "$ARCHIVE/data/british.fictionary"
-        docker run --rm -v \
-          "$PWD/target:/target:Z" \
+            compile /data/british.words "$ARCHIVE/data/british.fictionary"
+        docker run --rm \
+          -v "$PWD/target:/target:Z" \
+          -v "$PWD/data:/data" \
           "ghcr.io/cross-rs/${{ matrix.target }}:main" \
           "${{ matrix.qemu }}" "/$BIN" \
-            compile data/english.words "$ARCHIVE/data/english.fictionary"
+            compile /data/english.words "$ARCHIVE/data/english.fictionary"
 
     - name: Build archive (Windows)
       shell: bash
