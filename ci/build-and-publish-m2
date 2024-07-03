@@ -27,7 +27,7 @@ BIN=target/$target/release/fictionary
 NAME=fictionary-$version-$target
 ARCHIVE="deployment/m2/$NAME"
 
-mkdir -p "$ARCHIVE"/{complete,doc}
+mkdir -p "$ARCHIVE"/{complete,doc,data}
 cp "$BIN" "$ARCHIVE"/
 strip "$ARCHIVE/fictionary"
 # COPYING,UNLICENSE,LICENSE-MIT
@@ -38,7 +38,10 @@ cp {README.md,LICENSE.txt} "$ARCHIVE"/
 "$BIN" completion powershell > "$ARCHIVE/complete/_fictionary.ps1"
 "$BIN" completion zsh > "$ARCHIVE/complete/_fictionary"
 "$BIN" completion man > "$ARCHIVE/doc/fictionary.1"
+"$BIN" compile data/american.words "$ARCHIVE/data/american.fictionary"
+"$BIN" compile data/british.words "$ARCHIVE/data/british.fictionary"
+"$BIN" compile data/english.words "$ARCHIVE/data/english.fictionary"
 
 tar c -C deployment/m2 -z -f "$ARCHIVE.tar.gz" "$NAME"
 shasum -a 256 "$ARCHIVE.tar.gz" > "$ARCHIVE.tar.gz.sha256"
-# gh release upload "$version" "$ARCHIVE.tar.gz" "$ARCHIVE.tar.gz.sha256"
+gh release upload "$version" "$ARCHIVE.tar.gz" "$ARCHIVE.tar.gz.sha256"
