@@ -244,12 +244,12 @@ jobs:
           "ghcr.io/cross-rs/${{ matrix.target }}:main" \
           "${{ matrix.qemu }}" "/$BIN" \
             completion man > "$ARCHIVE/doc/fictionary.1"
-        echo "List /data"
+        echo "List '$ARCHIVE'"
         docker run --rm \
           -v "$PWD/target:/target:Z" \
           -v "$PWD/data:/data:Z" \
           "ghcr.io/cross-rs/${{ matrix.target }}:main" \
-          ls -l /data
+          ls -l $ARCHIVE
         docker run --rm \
           -v "$PWD/target:/target:Z" \
           -v "$PWD/data:/data:Z" \
