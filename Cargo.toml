@@ -5,6 +5,14 @@ authors = ["Mark Smith <judy@judy.co.uk>"]
 version = "0.1.2"
 edition = "2021"
 license = "MIT"
+homepage = "https://github.com/judy2k/fictionary-rs"
+repository = "https://github.com/judy2k/fictionary-rs"
+categories = ["command-line-utilities"]
+exclude = [
+  "HomebrewFormula",
+  "/.github/",
+  "/ci/",
+]
 
 [dependencies]
 camino = "1.1.7"

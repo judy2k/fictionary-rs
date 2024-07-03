@@ -1,6 +1,7 @@
 # Fictionary (in Rust)
 
-![Rust Build](https://github.com/judy2k/fictionary-rs/actions/workflows/rust.yml/badge.svg)
+[![Rust Build][ci-badge]][ci-url]
+[![Crate Version][version-badge]][version-url]
 
 This is a port of my [Fictionary tool](https://github.com/judy2k/fictionary) to
 Rust. It currently works, but it's still in the early stages.
@@ -25,3 +26,8 @@ In rough priority order:
 * Distribute as a library for re-use, as well as a binary?
 * Implement an infinite iterator of generated words.
 * Package up for installation using Homebrew?
+
+[ci-url]: https://github.com/judy2k/fictionary-rs/actions?query=branch%3Amain+workflow%3ARust
+[ci-badge]: https://img.shields.io/github/actions/workflow/status/judy2k/fictionary-rs/rust.yml?branch=main&style=for-the-badge
+[version-badge]: https://img.shields.io/crates/v/fictionary?style=for-the-badge&logo=rust
+[version-url]: https://crates.io/crates/fictionary

@@ -1,3 +1,6 @@
+build:
+    cargo build
+
 wordlist:
     make wordlists
 

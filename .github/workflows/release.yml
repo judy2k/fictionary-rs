@@ -204,12 +204,12 @@ jobs:
     - name: Creating directory for archive
       shell: bash
       run: |
-        mkdir -p "$ARCHIVE"/{complete,doc}
+        mkdir -p "$ARCHIVE"/{complete,data,doc}
         cp "$BIN" "$ARCHIVE"/
         cp {README.md,LICENSE.txt} "$ARCHIVE"/
         # cp {CHANGELOG.md,FAQ.md,GUIDE.md} "$ARCHIVE"/doc/
 
-    - name: Generate man page and completions (no emulation)
+    - name: Generate man page, completions, and data files (no emulation)
       if: matrix.qemu == ''
       shell: bash
       run: |
@@ -219,6 +219,9 @@ jobs:
         "$BIN" completion powershell > "$ARCHIVE/complete/_fictionary.ps1"
         "$BIN" completion zsh > "$ARCHIVE/complete/_fictionary"
         "$BIN" completion man > "$ARCHIVE/doc/fictionary.1"
+        "$BIN" compile data/american.words "$ARCHIVE/data/american.fictionary"
+        "$BIN" compile data/british.words "$ARCHIVE/data/british.fictionary"
+        "$BIN" compile data/english.words "$ARCHIVE/data/english.fictionary"
 
     - name: Generate man page and completions (emulation)
       if: matrix.qemu != ''
@@ -253,6 +256,21 @@ jobs:
           "ghcr.io/cross-rs/${{ matrix.target }}:main" \
           "${{ matrix.qemu }}" "/$BIN" \
             completion man > "$ARCHIVE/doc/fictionary.1"
+        docker run --rm -v \
+          "$PWD/target:/target:Z" \
+          "ghcr.io/cross-rs/${{ matrix.target }}:main" \
+          "${{ matrix.qemu }}" "/$BIN" \
+            compile data/american.words "$ARCHIVE/data/american.fictionary"
+        docker run --rm -v \
+          "$PWD/target:/target:Z" \
+          "ghcr.io/cross-rs/${{ matrix.target }}:main" \
+          "${{ matrix.qemu }}" "/$BIN" \
+            compile data/british.words "$ARCHIVE/data/british.fictionary"
+        docker run --rm -v \
+          "$PWD/target:/target:Z" \
+          "ghcr.io/cross-rs/${{ matrix.target }}:main" \
+          "${{ matrix.qemu }}" "/$BIN" \
+            compile data/english.words "$ARCHIVE/data/english.fictionary"
 
     - name: Build archive (Windows)
       shell: bash
@@ -339,6 +357,13 @@ jobs:
         "$BIN" completion bash > "$DEPLOY_DIR/fictionary.bash"
         "$BIN" completion fish > "$DEPLOY_DIR/fictionary.fish"
         "$BIN" completion zsh > "$DEPLOY_DIR/_fictionary"
+    
+    - name: Generate data files
+      shell: bash
+      run: |
+        "$BIN" compile data/english.words "$DEPLOY_DIR/english.fictionary"
+        "$BIN" compile data/british.words "$DEPLOY_DIR/british.fictionary"
+        "$BIN" compile data/american.words "$DEPLOY_DIR/american.fictionary"
 
     - name: Build release binary
       shell: bash
