@@ -244,30 +244,28 @@ jobs:
           "ghcr.io/cross-rs/${{ matrix.target }}:main" \
           "${{ matrix.qemu }}" "/$BIN" \
             completion man > "$ARCHIVE/doc/fictionary.1"
-        echo "List '$ARCHIVE'"
+
         docker run --rm \
           -v "$PWD/target:/target:Z" \
           -v "$PWD/data:/data:Z" \
-          "ghcr.io/cross-rs/${{ matrix.target }}:main" \
-          ls -l $ARCHIVE
-        docker run --rm \
-          -v "$PWD/target:/target:Z" \
-          -v "$PWD/data:/data:Z" \
+          -v "$PWD/$ARCHIVE:/archive" \
           "ghcr.io/cross-rs/${{ matrix.target }}:main" \
           "${{ matrix.qemu }}" "/$BIN" \
-            compile /data/american.words "$ARCHIVE/data/american.fictionary"
-        # docker run --rm \
-        #   -v "$PWD/target:/target:Z" \
-        #   -v "$PWD/data:/data" \
-        #   "ghcr.io/cross-rs/${{ matrix.target }}:main" \
-        #   "${{ matrix.qemu }}" "/$BIN" \
-        #     compile /data/british.words "$ARCHIVE/data/british.fictionary"
-        # docker run --rm \
-        #   -v "$PWD/target:/target:Z" \
-        #   -v "$PWD/data:/data" \
-        #   "ghcr.io/cross-rs/${{ matrix.target }}:main" \
-        #   "${{ matrix.qemu }}" "/$BIN" \
-        #     compile /data/english.words "$ARCHIVE/data/english.fictionary"
+            compile /data/american.words "/archive/data/american.fictionary"
+        docker run --rm \
+          -v "$PWD/target:/target:Z" \
+          -v "$PWD/data:/data:Z" \
+          -v "$PWD/$ARCHIVE:/archive" \
+          "ghcr.io/cross-rs/${{ matrix.target }}:main" \
+          "${{ matrix.qemu }}" "/$BIN" \
+            compile /data/british.words "/archive/data/british.fictionary"
+        docker run --rm \
+          -v "$PWD/target:/target:Z" \
+          -v "$PWD/data:/data:Z" \
+          -v "$PWD/$ARCHIVE:/archive" \
+          "ghcr.io/cross-rs/${{ matrix.target }}:main" \
+          "${{ matrix.qemu }}" "/$BIN" \
+            compile /data/english.words "/archive/data/english.fictionary"
 
     - name: Build archive (Windows)
       shell: bash
