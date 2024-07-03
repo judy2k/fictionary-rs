@@ -249,7 +249,7 @@ jobs:
           -v "$PWD/target:/target:Z" \
           -v "$PWD/data:/data" \
           "ghcr.io/cross-rs/${{ matrix.target }}:main" \
-          "${{ matrix.qemu }}" ls /data
+          ls /data
         docker run --rm \
           -v "$PWD/target:/target:Z" \
           -v "$PWD/data:/data" \
