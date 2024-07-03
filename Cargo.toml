@@ -36,7 +36,6 @@ inherits = "release"
 debug = false
 
 [package.metadata.deb]
-features = ["pcre2"]
 section = "utils"
 assets = [
   ["target/release/fictionary", "usr/bin/", "755"],
