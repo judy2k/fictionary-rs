@@ -16,7 +16,7 @@ mod sys_linux;
 use sys_linux as sys;
 
 use clap::{Args, Command, CommandFactory, Parser, Subcommand, ValueEnum};
-use clap_complete::{shells::Bash, shells::Fish, shells::Zsh, shells::PowerShell, generate};
+use clap_complete::{generate, shells::Bash, shells::Fish, shells::PowerShell, shells::Zsh};
 use clap_mangen;
 use std::{
     collections::HashMap,
@@ -87,7 +87,7 @@ enum Commands {
     /// Print out the available fictionary names.
     Names,
     /// Generate completion files for different shells.
-    #[clap(hide=true)]
+    #[clap(hide = true)]
     Completion(CompletionArgs),
 }
 
@@ -119,8 +119,9 @@ fn main() -> Result<()> {
             Commands::DataDirs => command_datadirs(),
             Commands::DataDir => command_datadir(),
             Commands::Names => command_fictionaries(),
-            Commands::Completion(completion_args) => command_completion(&mut Cli::command(), &completion_args),
-            
+            Commands::Completion(completion_args) => {
+                command_completion(&mut Cli::command(), &completion_args)
+            }
         },
         None => command_words(&args, &args.words),
     }
@@ -200,8 +201,7 @@ fn command_completion(cmd: &mut Command, completion_args: &CompletionArgs) -> Re
         CompletionTarget::Man => {
             let man = clap_mangen::Man::new(cmd.to_owned());
             man.render(&mut io::stdout())?
-        },
-
+        }
     };
 
     Ok(())
