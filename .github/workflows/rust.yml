@@ -2,7 +2,7 @@ name: test
 
 on:
   push:
-    branches: [ "main" ]
+    branches: '*'
   pull_request:
     branches: [ "main" ]
 
@@ -10,12 +10,45 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
-
+  check:
     runs-on: ubuntu-latest
+    steps:
+      - uses: hecrj/setup-rust-action@v2
+        with:
+          rust-version: stable
+          components: rustfmt, clippy
+      - uses: actions/checkout@v4
+      - name: Run rustfmt and clippy
+        run: |
+          cargo fmt -- --check
+          cargo clippy -- -Dwarnings
+  
+  build_and_test:
+    runs-on: ${{matrix.os}}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+        rust: [stable, nightly]
+        include:
+          - os: macOS-latest
+            rust: stable
+            targets: x86_64-apple-darwin
+          - os: windows-latest
+            rust: stable
+            targets: x86_64-pc-windows-msvc
+          - os: ubuntu-latest
+            rust: stable
+            targets: x86_64-unknown-linux-musl
 
     steps:
+    - uses: hecrj/setup-rust-action@v2
+      with:
+        rust-version: ${{ matrix.rust }}
+        components: ${{ matrix.components || '' }}
+        targets: ${{ matrix.targets || '' }}
+      # Check out code:
     - uses: actions/checkout@v4
+      # Check formatting:
     - name: Build
       run: cargo build --verbose
     - name: Run tests
