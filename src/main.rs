@@ -17,7 +17,6 @@ use sys_linux as sys;
 
 use clap::{Args, Command, CommandFactory, Parser, Subcommand, ValueEnum};
 use clap_complete::{generate, shells::Bash, shells::Fish, shells::PowerShell, shells::Zsh};
-use clap_mangen;
 use std::{
     collections::HashMap,
     fs,
@@ -120,7 +119,7 @@ fn main() -> Result<()> {
             Commands::DataDir => command_datadir(),
             Commands::Names => command_fictionaries(),
             Commands::Completion(completion_args) => {
-                command_completion(&mut Cli::command(), &completion_args)
+                command_completion(&mut Cli::command(), completion_args)
             }
         },
         None => command_words(&args, &args.words),
